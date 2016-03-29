@@ -1,6 +1,4 @@
 def createDatabase
-	DB.drop_table(:users, :accounts, :reminders, :currencies, :prices, :recurring_infos, :transactions, :payees, :limits, :cascade=>true)
-
 	DB.create_table! :users do
 		primary_key :id
 		String :name
@@ -45,7 +43,6 @@ def createDatabase
 		primary_key :id
 		String :description
 		String :place
-		DateTime :date
 		String :transaction_type
 		TrueClass :is_archive
 	end
