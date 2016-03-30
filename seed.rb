@@ -2,6 +2,9 @@ require "faker"
 
 def seedDatabase(users_count, currencies_count, tags_count, categories_count, accounts_count, recurring_infos_count, reminders_count, transactions_count, prices_count, payees_count, limits_count )
 
+	time = Time.now
+	puts time.inspect
+
 	puts "DATABASE SEEDING WITH VALUES  users_count : #{users_count}, currencies_count : #{currencies_count}, tags_count : #{tags_count}, categories_count : #{categories_count}, accounts_count : #{accounts_count}, recurring_infos_count : #{recurring_infos_count}, reminders_count : #{reminders_count}, transactions_count : #{transactions_count}, prices_count : #{prices_count}, payees_count : #{payees_count}, limits_count : #{limits_count} ..."
 
 	users = DB[:users]
@@ -133,4 +136,7 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 		  	used_pairs << [tag_id, category_id]
 		end
 	end
+
+	time = Time.now
+	puts time.inspect
 end
