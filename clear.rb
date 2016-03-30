@@ -1,6 +1,6 @@
 require "sequel"
 
-DB = Sequel.connect("postgres://postgres:123@localhost/budget")
+DB = Sequel.connect(ENV['DATABASE_URL'] || "postgres://postgres:123@localhost/budget")
 
 tables = [:categories_tags, :tags, :categories, :users, :accounts, :reminders, :currencies, :prices, :recurring_infos, :transactions, :payees, :limits]
 

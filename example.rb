@@ -4,7 +4,7 @@ require "./create_database.rb"
 require "./seed.rb"
 require './queriesA.rb'
 
-DB = Sequel.connect("postgres://postgres:123@localhost/budget", )
+DB = Sequel.connect(ENV['DATABASE_URL'] || "postgres://postgres:123@localhost/budget")
 
 require './models.rb'
 
