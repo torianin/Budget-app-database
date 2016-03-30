@@ -9,25 +9,26 @@ require 'logger'
 require 'faker'
 
 def queriesA
-	minValue = 1
-	maxValue = 50
 
 	loop do 
-		puts "MIN:#{minValue} MAX:#{maxValue}"
 		clearDatabase
 		createDatabase
-		seedDatabase(minValue,maxValue)
+		#W1
+		seedDatabase(800 ,20 ,1250 ,1500 ,2000 ,200 ,300 ,15000 ,15000 ,150 ,300)
+		execute_times = []
 
-		file = "#{Dir.pwd}/Queries/A/3.sql"
-		query1 = File.read(file)
+		(1..5).each do |i|
+			file = "#{Dir.pwd}/Queries/A/#{i}.sql"
+			query1 = File.read(file)
 
-		execute_time = get_execute_time(query1)
-		puts execute_time
+			execute_time = get_execute_time(query1)
+			puts execute_time
+			execute_times << execute_time
+		end
 
+		puts execute_times
 		#puts x.sql 
 		#x.each{|r| p r}
-
-
 
  		break if true
 
