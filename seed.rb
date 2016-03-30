@@ -93,12 +93,14 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 		)
 	end
 
-	(0..prices_count).each do |i|
-		prices.insert(
-			:value => Faker::Number.decimal(2),
-			:transaction_id => DB[:transactions].all[i][:id],
-			:currency_id => DB[:currencies].all.sample[:id]
-			)
+	(0..transactions_count).each do |i|
+		if Faker::Boolean.boolean(0.5) == true
+			prices.insert(
+				:value => Faker::Number.decimal(2),
+				:transaction_id => DB[:transactions].all[i][:id],
+				:currency_id => DB[:currencies].all.sample[:id]
+				) 
+		end
 	end
 
 	(0..payees_count).each do
