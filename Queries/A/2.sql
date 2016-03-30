@@ -1,3 +1,4 @@
+-- Znalezienie w bazie użytkownika, który zarobił najwięcej w czasie od X1 do X2.
 SELECT 
 	SUM(prices.value), COUNT(users.id)
 FROM 

@@ -1,3 +1,4 @@
+-- Obliczenie bilansu wydatków/dochodów w zakresie dwóch dat (np. ostatni miesiąc)
 SELECT 
 	SUM(p1.value) AS income, 	SUM(p2.value) AS expense
 FROM 

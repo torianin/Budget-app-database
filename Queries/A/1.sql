@@ -1,3 +1,4 @@
+-- Znalezienie 5 transakcji o najwyższej kwocie w okresie od X1 do X2.
 SELECT 
 	* 
 FROM 

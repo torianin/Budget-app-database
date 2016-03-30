@@ -1,3 +1,4 @@
+-- Zsumować wartości transakcji dla każdej kategorii, a następnie policzyć średnie względem kategorii.
 SELECT 
 	SUM(prices.value), AVG(prices.value), COUNT(users.id)
 FROM 

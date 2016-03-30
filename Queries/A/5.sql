@@ -1,3 +1,4 @@
+-- Suma wszystkich wydatków większych od X nie będących kategorią lub podkategorią “samochód”, pogrupowane względem waluty.
 SELECT 
 	currencies.short_name, SUM(prices.value) 
 FROM 

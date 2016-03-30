@@ -9,15 +9,12 @@ require 'logger'
 require 'faker'
 
 def queriesA
-	minValue = 1
-	maxValue = 50
 
 	loop do 
-		puts "MIN:#{minValue} MAX:#{maxValue}"
 		clearDatabase
 		createDatabase
-		seedDatabase(minValue,maxValue)
-
+		#W1
+		seedDatabase(1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250 )
 		execute_times = []
 
 		(1..5).each do |i|
