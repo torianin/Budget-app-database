@@ -59,6 +59,7 @@ DB.create_table! :transactions do
 	String :description
 	String :place
 	String :transaction_type
+	DateTime :date_time
 	TrueClass :is_archive
 	foreign_key :user_id, :users
 	foreign_key :category_id, :categories
