@@ -5,6 +5,7 @@ DB.create_table! :users do
 	String :name
 	String :phone
 	String :note
+	DateTime :creation
 end
 
 DB.create_table! :currencies do

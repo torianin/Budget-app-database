@@ -18,7 +18,8 @@ def seedDatabase
 		users.insert(
 			:name => Faker::Name.name,
 			:phone => Faker::PhoneNumber.cell_phone,
-			:note => Faker::Boolean.boolean(0.15) ? Faker::Lorem.sentence(3) : nil
+			:note => Faker::Boolean.boolean(0.15) ? Faker::Lorem.sentence(3) : nil,
+			:creation => Faker::Date.backward(3000),
 			)
 	end
 
