@@ -13,8 +13,8 @@ def queriesA
 	maxValue = 50
 
 	loop do 
-		minValue += 25
-		maxValue += 25
+		minValue += 0
+		maxValue += 10
 
 		puts "MIN:#{minValue} MAX:#{maxValue}"
 		clearDatabase
@@ -25,6 +25,7 @@ def queriesA
 		query1 = File.read(file)
 
 		execute_time = get_execute_time(query1)
+		puts execute_time
 
 		x = Transaction.association_join(:prices).where(:creation_date_time => Faker::Date.forward(0)..Faker::Date.forward(10)).where(:is_archive => false).order(Sequel.desc(:value)).limit(5)
 		#puts x.sql 
