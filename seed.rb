@@ -10,6 +10,7 @@ def seedDatabase
 	transactions = DB[:transactions]
 	payees = DB[:payees]
 	limits = DB[:limits]
+	categories = DB[:categories]
 
 	(1..50).each do
 		users.insert(
@@ -77,7 +78,14 @@ def seedDatabase
 
 	(1..50).each do
 		limits.insert(
-			:amount => Faker::Commerce.price
+			:amount => Faker::Commerce.price,
+			)
+	end
+
+	(1..50).each do
+		categories.insert(
+			:name => ["Auto", "Spożywcze", "Sport"].sample,
+			:user_id => DB[:users].all.sample[:id]
 			)
 	end
 end

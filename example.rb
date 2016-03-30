@@ -5,5 +5,7 @@ require "./seed.rb"
 
 DB = Sequel.connect("postgres://localhost/budget")
 
+require './models.rb'
+
 createDatabase
 seedDatabase
