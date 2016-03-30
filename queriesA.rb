@@ -18,16 +18,20 @@ def queriesA
 		createDatabase
 		seedDatabase(minValue,maxValue)
 
-		file = "#{Dir.pwd}/Queries/A/3.sql"
-		query1 = File.read(file)
+		execute_times = []
 
-		execute_time = get_execute_time(query1)
-		puts execute_time
+		(1..5).each do |i|
+			file = "#{Dir.pwd}/Queries/A/#{i}.sql"
+			query1 = File.read(file)
 
+			execute_time = get_execute_time(query1)
+			puts execute_time
+			execute_times << execute_time
+		end
+
+		puts execute_times
 		#puts x.sql 
 		#x.each{|r| p r}
-
-
 
  		break if true
 

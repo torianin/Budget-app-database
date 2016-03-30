@@ -12,4 +12,6 @@ WHERE
 	t2.creation_date_time >= '2015-03-31'
 	AND t2.creation_date_time <= '2017-04-06' AND 
 	t1.transaction_type = 'income' AND 
-	t2.transaction_type = 'expense'
+	t2.transaction_type = 'expense' AND
+	t1.is_archive IS FALSE AND
+	t2.is_archive IS FALSE
