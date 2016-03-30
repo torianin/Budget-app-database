@@ -14,7 +14,7 @@ def queriesA
 		clearDatabase
 		createDatabase
 		#W1
-		seedDatabase(1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250 )
+		seedDatabase(800 ,20 ,1250 ,1500 ,2000 ,200 ,300 ,15000 ,15000 ,150 ,300)
 		execute_times = []
 
 		(1..5).each do |i|
