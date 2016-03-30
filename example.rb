@@ -6,7 +6,4 @@ require './models.rb'
 require "./seed.rb"
 require './queriesA.rb'
 
-clearDatabase
-createDatabase
-seedDatabase(1,50)
 queriesA
