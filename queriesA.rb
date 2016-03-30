@@ -1,9 +1,8 @@
-require 'Logger'
+require './custom_logger.rb'
 
 def queriesA
-	DB.loggers << Logger.new(STDOUT)
-	DB.sql_log_level = :debug
-	puts DB.run("select * from users")
+	get_execute_time("select * from users")
 
+	DB[:transactions].where(:salary => 5000..10000).order(:name, :department)
 
 end

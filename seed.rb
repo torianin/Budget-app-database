@@ -81,6 +81,7 @@ def seedDatabase
 			:description => Faker::Lorem.sentence(3),
 			:place => "#{Faker::Address.latitude} #{Faker::Address.longitude}",
 			:transaction_type => ["expense", "income"].sample,
+			:creation_date_time => Faker::Date.forward(23),
 			:is_archive => Faker::Boolean.boolean(0.2),
 			:user_id => DB[:users].all.sample[:id],
 			:category_id => DB[:categories].all.sample[:id],

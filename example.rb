@@ -3,11 +3,12 @@ require "sequel"
 require "./create_database.rb"
 require "./seed.rb"
 require './queriesA.rb'
-
-DB = Sequel.connect("postgres://postgres:123@localhost/budget", )
-
+require './clear.rb'
 require './models.rb'
 
 createDatabase
 seedDatabase
+
+DB.loggers << Logger.new($stdout)
+
 queriesA
