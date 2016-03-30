@@ -1,8 +1,35 @@
+require "rubygems"
+require "sequel"
+require './clear.rb'
+require "./create_database.rb"
+require './models.rb'
+require "./seed.rb"
 require './custom_logger.rb'
+require 'logger'
+require 'faker'
 
 def queriesA
-	get_execute_time("select * from users")
+	minValue = 1
+	maxValue = 50
 
-	DB[:transactions].where(:salary => 5000..10000).order(:name, :department)
+	loop do 
+		minValue += 25
+		maxValue += 25
 
+		puts "MIN:#{minValue} MAX:#{maxValue}"
+		clearDatabase
+		createDatabase
+		seedDatabase(minValue,maxValue)
+
+		file = "#{Dir.pwd}/Queries/A/1.sql"
+		query1 = File.read(file)
+
+		execute_time = get_execute_time(query1)
+
+		x = Transaction.association_join(:prices).where(:creation_date_time => Faker::Date.forward(0)..Faker::Date.forward(10)).where(:is_archive => false).order(Sequel.desc(:value)).limit(5)
+		#puts x.sql 
+		#x.each{|r| p r}
+
+ 		break if execute_time > 5.0
+	end 
 end

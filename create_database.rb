@@ -1,5 +1,7 @@
 def createDatabase
 
+puts "CREATING DATABASE ..."
+
 DB.create_table! :users do
 	primary_key :id
 	String :name
@@ -92,6 +94,5 @@ DB.create_table! :limits do
 end
 
 DB.create_join_table!(:tag_id=>:tags, :category_id=>:categories)
-
 
 end

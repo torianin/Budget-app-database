@@ -1,6 +1,9 @@
 require "faker"
 
-def seedDatabase
+def seedDatabase(minValue, maxValue)
+
+	puts "DATABASE SEEDING WITH MIN:#{minValue} MAX#{maxValue}..."
+
 	users = DB[:users]
 	currencies = DB[:currencies]
 	tags = DB[:tags]
@@ -14,7 +17,7 @@ def seedDatabase
 	limits = DB[:limits]
 	categories_tags = DB[:categories_tags]
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		users.insert(
 			:name => Faker::Name.name,
 			:phone => Faker::PhoneNumber.cell_phone,
@@ -23,7 +26,7 @@ def seedDatabase
 			)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		currencies.insert(
 			:name => Faker::Company.name,
 			:short_name => Faker::Lorem.word[0..2].upcase,
@@ -41,7 +44,7 @@ def seedDatabase
 	end
 
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		categories.insert(
 			:name => Faker::Lorem.word.capitalize,
 			:user_id => DB[:users].all.sample[:id],
@@ -49,7 +52,7 @@ def seedDatabase
 			)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		accounts.insert(
 			:name => Faker::Company.name,
 			:balance => Faker::Number.decimal(2),
@@ -59,7 +62,7 @@ def seedDatabase
 			)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		recurring_infos.insert(
 			:starting_date => Faker::Date.backward(100),
 			:end_date => Faker::Date.forward(100),
@@ -67,7 +70,7 @@ def seedDatabase
 		)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		reminders.insert(
 			:name => Faker::Company.name,
 			:description => Faker::Lorem.sentence(3),
@@ -76,7 +79,7 @@ def seedDatabase
 			)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		transactions.insert(
 			:description => Faker::Lorem.sentence(3),
 			:place => "#{Faker::Address.latitude} #{Faker::Address.longitude}",
@@ -90,7 +93,7 @@ def seedDatabase
 		)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		prices.insert(
 			:value => Faker::Number.decimal(2),
 			:transaction_id => DB[:transactions].all.sample[:id],
@@ -98,7 +101,7 @@ def seedDatabase
 			)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		payees.insert(
 			:name => Faker::Name.name,
 			:phone => Faker::PhoneNumber.cell_phone,
@@ -108,7 +111,7 @@ def seedDatabase
 			)
 	end
 
-	(1..50).each do
+	(minValue..maxValue).each do
 		limits.insert(
 			:amount => Faker::Commerce.price,
 			:category_id => DB[:categories].all.sample[:id],
@@ -117,7 +120,7 @@ def seedDatabase
 	end
 
 	used_pairs = []
-	(1..50).each do
+	(minValue..maxValue).each do
 		tag_id = DB[:tags].all.sample[:id]
 		category_id = DB[:categories].all.sample[:id]
 		if !used_pairs.include?([tag_id, category_id])

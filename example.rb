@@ -1,14 +1,12 @@
 require "rubygems"
 require "sequel"
+require './clear.rb'
 require "./create_database.rb"
+require './models.rb'
 require "./seed.rb"
 require './queriesA.rb'
-require './clear.rb'
-require './models.rb'
 
+clearDatabase
 createDatabase
-seedDatabase
-
-DB.loggers << Logger.new($stdout)
-
+seedDatabase(1,50)
 queriesA
