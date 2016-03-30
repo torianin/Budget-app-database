@@ -20,6 +20,7 @@ end
 
 class Tags < Sequel::Model
 	many_to_one :user
+	many_to_many :categories
 end
 
 class Limit < Sequel::Model
@@ -33,6 +34,7 @@ class Category < Sequel::Model
   one_to_many :categories
   one_to_many :limits
   one_to_many :transactions
+  many_to_many :tags
 end
 
 class User < Sequel::Model
