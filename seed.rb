@@ -20,109 +20,134 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 	limits = DB[:limits]
 	categories_tags = DB[:categories_tags]
 
+	user_data = []
 	(0..users_count).each do
-		users.insert(
-			:name => Faker::Name.name,
-			:phone => Faker::PhoneNumber.cell_phone,
-			:note => Faker::Boolean.boolean(0.15) ? Faker::Lorem.sentence(3) : nil,
-			:creation => Faker::Date.backward(3000),
-			)
+		user_data << [
+			Faker::Name.name,
+			Faker::PhoneNumber.cell_phone,
+			Faker::Boolean.boolean(0.15) ? Faker::Lorem.sentence(3) : nil,
+			Faker::Date.backward(3000),
+			]
 	end
+	users.import([:name, :phone, :note, :creation], user_data)
 
+	currencies_data = []
 	(0..currencies_count).each do
-		currencies.insert(
-			:name => Faker::Company.name,
-			:short_name => Faker::Lorem.word[0..2].upcase,
-			:date_time => Faker::Date.forward(23),
-			:current_value_in_usd => Faker::Commerce.price
-			)
+		currencies_data << [
+			Faker::Company.name,
+			Faker::Lorem.word[0..2].upcase,
+			Faker::Date.forward(23),
+			Faker::Commerce.price
+			]
 	end
+	currencies.import([:name, :short_name, :date_time, :current_value_in_usd], currencies_data)
 
+	tags_data = []
 	(0..tags_count).each do |tag|
-		tags.insert(
-			:name => Faker::Lorem.word.capitalize,
-			:color => Faker::Color.color_name,
-			:user_id => DB[:users].all.sample[:id]
-			)
+		tags_data << [
+			Faker::Lorem.word.capitalize,
+			Faker::Color.color_name,
+			DB[:users].all.sample[:id]
+			]
 	end
+	tags.import([:name, :color, :user_id], tags_data)
 
-
+	categories_data = []
 	(0..categories_count).each do
-		categories.insert(
-			:name => Faker::Lorem.word.capitalize,
-			:user_id => DB[:users].all.sample[:id],
-			:category_id => Faker::Boolean.boolean(0.2) && !DB[:categories].all.empty? ? DB[:categories].all.sample[:id] : nil
-			)
+		categories_data << [
+			Faker::Lorem.word.capitalize,
+			DB[:users].all.sample[:id],
+			Faker::Boolean.boolean(0.2) && !DB[:categories].all.empty? ? DB[:categories].all.sample[:id] : nil
+			]
 	end
+	categories.import([:name, :user_id, :category_id], categories_data)
 
+
+	accounts_data = []
 	(0..accounts_count).each do
-		accounts.insert(
-			:name => Faker::Company.name,
-			:balance => Faker::Number.decimal(2),
-			:account_number => Faker::Bitcoin.address,
-			:user_id => DB[:users].all.sample[:id],
-			:currency_id => DB[:currencies].all.sample[:id]
-			)
+		accounts_data << [
+			Faker::Company.name,
+			Faker::Number.decimal(2),
+			Faker::Bitcoin.address,
+			DB[:users].all.sample[:id],
+			DB[:currencies].all.sample[:id]
+			]
 	end
+	accounts.import([:name, :balance, :account_number, :user_id, :currency_id ], accounts_data)
 
+	recurring_infos_data = []
 	(0..recurring_infos_count).each do
-		recurring_infos.insert(
-			:starting_date => Faker::Date.backward(100),
-			:end_date => Faker::Date.forward(100),
-			:period => ["daily", "weekly", "monthly"].sample
-		)
+		recurring_infos_data << [
+			Faker::Date.backward(100),
+			Faker::Date.forward(100),
+			["daily", "weekly", "monthly"].sample
+		]
 	end
+	recurring_infos.import([:starting_date, :end_date, :period], recurring_infos_data)
 
+
+	reminders_data = []
 	(0..reminders_count).each do
-		reminders.insert(
-			:name => Faker::Company.name,
-			:description => Faker::Lorem.sentence(3),
-			:user_id => DB[:users].all.sample[:id],
-			:recurring_info_id => DB[:recurring_infos].all.sample[:id]
-			)
+		reminders_data << [
+			Faker::Company.name,
+			Faker::Lorem.sentence(3),
+			DB[:users].all.sample[:id],
+			DB[:recurring_infos].all.sample[:id]
+			]
 	end
+	reminders.import([:name, :description, :user_id, :recurring_info_id], reminders_data)
 
+	transactions_data = []
 	(0..transactions_count).each do
-		transactions.insert(
-			:description => Faker::Lorem.sentence(3),
-			:place => "#{Faker::Address.latitude} #{Faker::Address.longitude}",
-			:transaction_type => ["expense", "income"].sample,
-			:creation_date_time => Faker::Date.forward(23),
-			:is_archive => Faker::Boolean.boolean(0.2),
-			:user_id => DB[:users].all.sample[:id],
-			:category_id => DB[:categories].all.sample[:id],
-			:account_id => DB[:accounts].all.sample[:id],
-			:recurring_info_id => DB[:recurring_infos].all.sample[:id]
-		)
+		transactions_data << [
+			Faker::Lorem.sentence(3),
+			"#{Faker::Address.latitude} #{Faker::Address.longitude}",
+			["expense", "income"].sample,
+			Faker::Date.forward(23),
+			Faker::Boolean.boolean(0.2),
+			DB[:users].all.sample[:id],
+			DB[:categories].all.sample[:id],
+			DB[:accounts].all.sample[:id],
+			DB[:recurring_infos].all.sample[:id]
+		]
 	end
+	transactions.import([:description, :place, :transaction_type, :creation_date_time, :is_archive, :user_id, :category_id, :account_id, :recurring_info_id], transactions_data)
 
+
+	prices_data = []
 	(0..transactions_count).each do |i|
 		if Faker::Boolean.boolean(0.5) == true
-			prices.insert(
-				:value => Faker::Number.decimal(2),
-				:transaction_id => DB[:transactions].all[i][:id],
-				:currency_id => DB[:currencies].all.sample[:id]
-				) 
+			prices_data << [
+				Faker::Number.decimal(2),
+				DB[:transactions].all[i][:id],
+				DB[:currencies].all.sample[:id]
+				]
 		end
 	end
+	prices.import([:value, :transaction_id, :currency_id], prices_data)
 
+	payees_data = []
 	(0..payees_count).each do
-		payees.insert(
-			:name => Faker::Name.name,
-			:phone => Faker::PhoneNumber.cell_phone,
-			:account_number => Faker::Business.credit_card_number,
-			:note => Faker::Lorem.sentence(3),
-			:transaction_id => DB[:transactions].all.sample[:id],
-			)
+		payees_data << [
+			Faker::Name.name,
+			Faker::PhoneNumber.cell_phone,
+			Faker::Business.credit_card_number,
+			Faker::Lorem.sentence(3),
+			DB[:transactions].all.sample[:id],
+			]
 	end
+	payees.import([:name, :phone, :account_number, :note, :transaction_id], payees_data)
 
+
+	limits_data = []
 	(0..limits_count).each do
-		limits.insert(
-			:amount => Faker::Commerce.price,
-			:category_id => DB[:categories].all.sample[:id],
-			:recurring_info_id => DB[:recurring_infos].all.sample[:id],
-			)
+		limits_data << [
+			Faker::Commerce.price,
+			DB[:categories].all.sample[:id],
+			DB[:recurring_infos].all.sample[:id],
+			]
 	end
+	limits.import([:amount, :category_id, :recurring_info_id], limits_data)
 
 	used_pairs = []
 	(0..tags_count+categories_count).each do
