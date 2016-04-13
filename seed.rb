@@ -1,12 +1,12 @@
 require "faker"
 require 'thread'
 
-def seedDatabase(users_count, currencies_count, tags_count, categories_count, accounts_count, recurring_infos_count, reminders_count, transactions_count, prices_count, payees_count, limits_count )
+def seedDatabase(seed_values)
 
 	time = Time.now
 	puts time.inspect
 
-	puts "DATABASE SEEDING WITH VALUES  users_count : #{users_count}, currencies_count : #{currencies_count}, tags_count : #{tags_count}, categories_count : #{categories_count}, accounts_count : #{accounts_count}, recurring_infos_count : #{recurring_infos_count}, reminders_count : #{reminders_count}, transactions_count : #{transactions_count}, prices_count : #{prices_count}, payees_count : #{payees_count}, limits_count : #{limits_count} ..."
+	puts "DATABASE SEEDING WITH VALUES  seed_values[:users_count] : #{seed_values[:users_count]}, seed_values[:currencies_count] : #{seed_values[:currencies_count]}, seed_values[:tags_count] : #{seed_values[:tags_count]}, seed_values[:categories_count] : #{seed_values[:categories_count]}, seed_values[:accounts_count ]: #{seed_values[:accounts_count]}, seed_values[:recurring_infos_count] : #{seed_values[:recurring_infos_count]}, seed_values[:reminders_count] : #{seed_values[:reminders_count]}, seed_values[:transactions_count] : #{seed_values[:transactions_count]}, seed_values[:prices_count] : #{seed_values[:prices_count]}, seed_values[:payees_count] : #{seed_values[:payees_count]}, seed_values[:limits_count] : #{seed_values[:limits_count]} ..."
 
 	users = DB[:users]
 	currencies = DB[:currencies]
@@ -23,10 +23,10 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 
 	threads = []
 
-	threads << Thread.new(users_count) {
+	threads << Thread.new(seed_values[:users_count]) {
 		puts "Creating users"
 		$user_data = []
-		(0..users_count).each do
+		(0..seed_values[:users_count]).each do
 			$user_data << [
 				Faker::Name.name,
 				Faker::PhoneNumber.cell_phone,
@@ -36,10 +36,10 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 		end
 	}
 
-	threads << Thread.new(currencies_count) {
+	threads << Thread.new(seed_values[:currencies_count]) {
 		puts "Creating currencies"
 		$currencies_data = []
-		(0..currencies_count).each do
+		(0..seed_values[:currencies_count]).each do
 			$currencies_data << [
 				Faker::Company.name,
 				Faker::Lorem.word[0..2].upcase,
@@ -49,48 +49,48 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 		end
 	}
 
-	threads << Thread.new(users_count, tags_count) {
+	threads << Thread.new(seed_values[:users_count], seed_values[:tags_count]) {
 		puts "Creating tags"
 		$tags_data = []
-		(0..tags_count).each do |tag|
+		(0..seed_values[:tags_count]).each do |tag|
 			$tags_data << [
 				Faker::Lorem.word.capitalize,
 				Faker::Color.color_name,
-				Faker::Number.between(1, users_count )
+				Faker::Number.between(1, seed_values[:users_count] )
 				]
 		end
 	}
 
-	threads << Thread.new(categories_count) {
+	threads << Thread.new(seed_values[:categories_count]) {
 		puts "Creating categories"
 		$categories_data = []
-		(0..categories_count).each do
+		(0..seed_values[:categories_count]).each do
 			$categories_data << [
 				Faker::Lorem.word.capitalize,
-				Faker::Number.between(1, users_count ),
+				Faker::Number.between(1, seed_values[:users_count] ),
 				Faker::Boolean.boolean(0.2) && !$categories_data.empty? ? Faker::Number.between(1, $categories_data.size ) : nil
 				]
 		end
 	}
 
-	threads << Thread.new(users_count, currencies_count, accounts_count) {
+	threads << Thread.new(seed_values[:users_count], seed_values[:currencies_count], seed_values[:accounts_count]) {
 		puts "Creating accounts"
 		$accounts_data = []
-		(0..accounts_count).each do
+		(0..seed_values[:accounts_count]).each do
 			$accounts_data << [
 				Faker::Company.name,
 				Faker::Number.decimal(2),
 				Faker::Bitcoin.address,
-				Faker::Number.between(1, users_count ),
-				Faker::Number.between(1, currencies_count ),
+				Faker::Number.between(1, seed_values[:users_count] ),
+				Faker::Number.between(1, seed_values[:currencies_count] ),
 				]
 		end
 	}
 
-	threads << Thread.new(recurring_infos_count) {
+	threads << Thread.new(seed_values[:recurring_infos_count]) {
 		puts "Creating recurring infos"
 		$recurring_infos_data = []
-		(0..recurring_infos_count).each do
+		(0..seed_values[:recurring_infos_count]).each do
 			$recurring_infos_data << [
 				Faker::Date.backward(100),
 				Faker::Date.forward(100),
@@ -99,73 +99,73 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 		end
 	}
 
-	threads << Thread.new(users_count, recurring_infos_count, reminders_count) {
+	threads << Thread.new(seed_values[:users_count], seed_values[:recurring_infos_count], seed_values[:reminders_count]) {
 		puts "Creating reminders"
 		$reminders_data = []
-		(0..reminders_count).each do
+		(0..seed_values[:reminders_count]).each do
 			$reminders_data << [
 				Faker::Company.name,
 				Faker::Lorem.sentence(3),
-				Faker::Number.between(1, users_count ),
-				Faker::Number.between(1, recurring_infos_count )
+				Faker::Number.between(1, seed_values[:users_count] ),
+				Faker::Number.between(1, seed_values[:recurring_infos_count] )
 				]
 		end
 	}
 
-	threads << Thread.new(transactions_count, users_count, categories_count, accounts_count, recurring_infos_count) {
+	threads << Thread.new(seed_values[:transactions_count], seed_values[:users_count], seed_values[:categories_count], seed_values[:accounts_count], seed_values[:recurring_infos_count]) {
 		puts "Creating transactions"
 		$transactions_data = []
-		(0..transactions_count).each do
+		(0..seed_values[:transactions_count]).each do
 			$transactions_data << [
 				Faker::Lorem.sentence(3),
 				"#{Faker::Address.latitude} #{Faker::Address.longitude}",
 				["expense", "income"].sample,
 				Faker::Date.forward(23),
 				Faker::Boolean.boolean(0.2),
-				Faker::Number.between(1, users_count ),
-				Faker::Number.between(1, categories_count ),
-				Faker::Number.between(1, accounts_count ),
-				Faker::Number.between(1, recurring_infos_count )
+				Faker::Number.between(1, seed_values[:users_count] ),
+				Faker::Number.between(1, seed_values[:categories_count] ),
+				Faker::Number.between(1, seed_values[:accounts_count] ),
+				Faker::Number.between(1, seed_values[:recurring_infos_count] )
 			]
 		end
 	}
 
-	threads << Thread.new(transactions_count, currencies_count) {
+	threads << Thread.new(seed_values[:transactions_count], seed_values[:currencies_count]) {
 		puts "Creating prices"
 		$prices_data = []
-		(0..transactions_count).each do |transactions|
+		(0..seed_values[:transactions_count]).each do |transactions|
 			if Faker::Boolean.boolean(0.5) == true
 				$prices_data << [
 					Faker::Number.decimal(2),
 					transactions + 1,
-					Faker::Number.between(1, currencies_count )
+					Faker::Number.between(1, seed_values[:currencies_count] )
 					]
 			end
 		end
 	}
 
-	threads << Thread.new(payees_count, transactions_count) {
+	threads << Thread.new(seed_values[:payees_count], seed_values[:transactions_count]) {
 		puts "Creating payees"
 		$payees_data = []
-		(0..payees_count).each do
+		(0..seed_values[:payees_count]).each do
 			$payees_data << [
 				Faker::Name.name,
 				Faker::PhoneNumber.cell_phone,
 				Faker::Business.credit_card_number,
 				Faker::Lorem.sentence(3),
-				Faker::Number.between(1, transactions_count )
+				Faker::Number.between(1, seed_values[:transactions_count] )
 				]
 		end
 	}
 
-	threads << Thread.new(limits_count, categories_count, recurring_infos_count) {
+	threads << Thread.new(seed_values[:limits_count], seed_values[:categories_count], seed_values[:recurring_infos_count]) {
 		puts "Creating limits"
 		$limits_data = []
-		(0..limits_count).each do
+		(0..seed_values[:limits_count]).each do
 			$limits_data << [
 				Faker::Commerce.price,
-				Faker::Number.between(1, categories_count ),
-				Faker::Number.between(1, recurring_infos_count )
+				Faker::Number.between(1, seed_values[:categories_count] ),
+				Faker::Number.between(1, seed_values[:recurring_infos_count] )
 				]
 		end
 	}
@@ -184,7 +184,7 @@ def seedDatabase(users_count, currencies_count, tags_count, categories_count, ac
 	limits.import([:amount, :category_id, :recurring_info_id], $limits_data)
 
 	used_pairs = []
-	(0..tags_count+categories_count).each do
+	(0..seed_values[:tags_count]+seed_values[:categories_count]).each do
 		tag_id = DB[:tags].all.sample[:id]
 		category_id = DB[:categories].all.sample[:id]
 		if !used_pairs.include?([tag_id, category_id])
