@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS "prices";
+DROP TABLE IF EXISTS "payees";
+DROP TABLE IF EXISTS "transactions";
+DROP TABLE IF EXISTS "limits";
+DROP TABLE IF EXISTS "categories_tags";
+DROP TABLE IF EXISTS "tags";
+DROP TABLE IF EXISTS "reminders";
+DROP TABLE IF EXISTS "categories";
+DROP TABLE IF EXISTS "accounts";
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "recurring_infos";
+DROP TABLE IF EXISTS "currencies";

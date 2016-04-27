@@ -1,74 +1,111 @@
 require "rubygems"
 require "sequel"
-require './clear.rb'
-require './models.rb'
-require './custom_logger.rb'
+require './config.rb'
 require 'logger'
 require 'faker'
 require 'terminal-table'
+require 'database_cleaner'
 
-@@rows = []
+UserConfig = ENV['USER'] == 'torianin' ? RobertsConfig.new : SzymonsConfig.new
 
-def queries(command, name)
-	execute_time_sum = []
-	execute_times_a = []
+DB = Sequel.connect(UserConfig.database_url, :loggers => [Logger.new($stdout)])
 
-	@@rows << ['', '',name,'']
+class DatabaseHelper
 
-	clearDatabase
-	wasGood = system( command )
+	def initialize
+		@rows = []
+	end
 
-	execute_times_a = []
-	(1..6).each do |i|
-		file = "#{Dir.pwd}/Queries/A/#{i}.sql"
-		query1 = File.read(file)
-		execute_time = 0.0
-		(0..3).each do |j|
-			execute_time = execute_time + get_execute_time(query1)
+	def clearDB()
+		cleanScript = "#{Dir.pwd}/scripts/cleardb.sql"
+		query1 = File.read(cleanScript)
+		DB.run query1
+	end
+
+	def setIndexes(number)
+		indexes = "#{Dir.pwd}/indexes/indexes#{number}.sql"
+		query1 = File.read(indexes)
+		DB.run query1
+	end
+
+	def queries(command, name, indexNumber = 0)
+		execute_time_sum = []
+		execute_times_a = []
+		
+		load './custom_logger.rb'
+
+		@rows << ['', '',name,'']
+
+		clearDB
+
+		wasGood = system( command )
+
+		load './models.rb'
+
+		if !indexNumber
+			setIndexes(indexNumber)
 		end
-		puts execute_time
-		execute_times_a << execute_time
-	end
-	execute_times_a << (execute_times_a.inject{ |sum, el| sum + el }.to_f / execute_times_a.size)
 
-	puts execute_times_a
-	#puts x.sql 
-	#x.each{|r| p r}
-	puts "OK"
-
-	execute_times_b = []
-	(1..6).each do |i|
-		file = "#{Dir.pwd}/Queries/B/#{i}.sql"
-		query1 = File.read(file)
-
-		execute_time = 0.0
-		(0..1).each do |j|
-			execute_time = execute_time + get_execute_time(query1)
+		execute_times_a = []
+		(1..5).each do |i|
+			puts "A#{i}"
+			file = "#{Dir.pwd}/queries/A/#{i}.sql"
+			query1 = File.read(file)
+			execute_time = 0.0
+			(0..10).each do |j|
+				execute_time = execute_time + get_execute_time(query1)
+			end
+			puts execute_time
+			execute_times_a << execute_time
 		end
-		puts execute_time
-		execute_times_b << execute_time
+		execute_times_a << (execute_times_a.reduce(0, :+).to_f / execute_times_a.size)
+
+		puts execute_times_a
+
+		execute_times_b = []
+		(1..5).each do |i|
+			puts "B#{i}"
+			file = "#{Dir.pwd}/queries/B/#{i}.sql"
+			query1 = File.read(file)
+
+			execute_time = 0.0
+			(0..10).each do |j|
+				execute_time = execute_time + get_execute_time(query1)
+			end
+			puts execute_time
+			execute_times_b << execute_time
+		end
+		execute_times_b << (execute_times_b.reduce(0, :+).to_f / execute_times_b.size)
+
+		puts execute_times_a
+
+		execute_time_sum << (execute_time_sum.reduce(0, :+).to_f / execute_time_sum.size)
+		@rows << ['','A','B','Suma']
+		(1..5).each do |i|
+			execute_time_sum << execute_times_a[i] + execute_times_b[i]
+			@rows << [i,'%.4f' % execute_times_a[i], '%.4f' % execute_times_b[i], '%.4f' %execute_time_sum[i]]
+		end
+		@rows << ["N",10,10,10]
+		@rows << ["AVG",'%.4f' % execute_times_a[5],'%.4f' % execute_times_a[5], '%.4f' % execute_time_sum[5]]
 	end
-	execute_times_b << (execute_times_b.inject{ |sum, el| sum + el }.to_f / execute_times_b.size)
 
-	puts execute_times_a
-	#puts x.sql 
-	#x.each{|r| p r}
+	def runTests
+		username = UserConfig.username
+		path = UserConfig.path
 
-	puts "OK"
+		(0..2).each do |k|
+			@rows = []
+			(1..3).each do |i|
+				#queries("pg_restore -U #{username} -O -x -d budget #{path}/backups/backupW1prim.dat","W#{i}",k)
+				queries("pg_restore -U #{username} -O -x -d budget #{path}/backups/W#{i}.dat","W#{i}",k)
 
-	execute_time_sum << (execute_time_sum.inject{ |sum, el| sum + el }.to_f / execute_time_sum.size)
-	@@rows << ['','A','B','Suma']
-	(1..6).each do |i|
-		execute_time_sum << execute_times_a[i] + execute_times_b[i]
-		@@rows << [i,'%.4f' % execute_times_a[i], '%.4f' % execute_times_b[i], '%.4f' %execute_time_sum[i]]
+			end
+			table = Terminal::Table.new :title => "Czas wykonania operacji na danych dla N powtórzeń", :rows => @rows
+			File.open("#{Dir.pwd}/results/test_#{Time.now.getutc.to_s}_index_#{k}.txt", 'w') { |file| file.write(table) }
+			puts table
+		end
 	end
-	@@rows << ["N",3,3,3]
-	@@rows << ["AVG",'%.4f' % execute_times_a[5],'%.4f' % execute_times_a[5], '%.4f' % execute_time_sum[5]]
 end
 
-queries('pg_restore -U torianin -O -x -d budget /Users/torianin/Budget-app-database/W1.dat','W1')
-queries('pg_restore -U torianin -O -x -d budget /Users/torianin/Budget-app-database/W2.dat','W2')
-queries('pg_restore -U torianin -O -x -d budget /Users/torianin/Budget-app-database/W3.dat','W3')
-
-table = Terminal::Table.new :title => "Czas wykonania operacji na danych dla N powtórzeń", :rows => @@rows
-puts table
+databaseHelper = DatabaseHelper.new
+databaseHelper.runTests
